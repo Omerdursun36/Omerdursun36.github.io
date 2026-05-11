@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tavşanlı Ekspres | Hızlı Sipariş</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #2f3542;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: 0.3s ease; }
+        body { margin: 0; background: var(--bg); color: var(--secondary); overflow-x: hidden; }
+
+        .page { display: none; min-height: 100vh; }
+        .page.active { display: block; }
+
+        /* --- GİRİŞ & KAYIT EKRANI --- */
+        .auth-container {
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        .auth-card {
+            background: var(--white); padding: 40px; border-radius: 20px;
+            width: 100%; max-width: 400px; box-shadow: var(--shadow); text-align: center;
+        }
+        .auth-card h2 { color: var(--primary); margin-bottom: 25px; font-weight: 800; }
+        .auth-card input {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            border: 1px solid #ddd; border-radius: 8px; outline: none;
+        }
+        .auth-card button {
+            width: 100%; padding: 12px; background: var(--primary);
+            color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+        .auth-card p { margin-top: 15px; font-size: 14px; cursor: pointer; color: #666; }
+        .auth-card p span { color: var(--primary); font-weight: 600; }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--white); padding: 15px 5%; display: flex;
+            justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow);
+        }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); }
+
+        /* --- KATEGORİLER --- */
+        .cat-nav { background: var(--secondary); padding: 12px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .cat-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 18px; border-radius: 20px; cursor: pointer; }
+        .cat-btn.active, .cat-btn:hover { background: var(--primary); border-color: var(--primary); }
+
+        /* --- RESTORANLAR --- */
+        .container { padding: 30px 5%; max-width: 1200px; margin: auto; }
+        .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .res-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); cursor: pointer; }
+        .res-img { height: 160px; width: 100%; object-fit: cover; }
+        .res-info { padding: 15px; }
+
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; }
+        .modal-body { background: white; width: 90%; max-width: 500px; margin: 50px auto; border-radius: 20px; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal-header { background: var(--primary); color: white; padding: 20px; position: sticky; top:0; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; }
+        .zurna { background: #ffd32a; color: black; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-right: 5px; }
+
+        /* --- SEPET --- */
+        #sidebar { position: fixed; right: -400px; top:0; width: 350px; height: 100%; background: white; z-index: 3000; box-shadow: -10px 0 30px rgba(0,0,0,0.1); padding: 20px; display: flex; flex-direction: column; }
+        #sidebar.active { right: 0; }
+        .cart-items { flex-grow: 1; overflow-y: auto; }
+
+        /* KART GÖRSELİ */
+        .card-visual { background: linear-gradient(135deg, #1e272e, #485e6a); color: white; padding: 20px; border-radius: 12px; margin: 10px 0; display: none; }
+        
+        footer { background: var(--secondary); color: white; text-align: center; padding: 20px; } 
+
+        .menu-tabs {
+            display: flex;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-btn {
+            border: none;
+            background: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-radius: 20px;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-page" class="page active">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Hoş Geldin</h2>
+                <input type="text" id="login-email" placeholder="Kullanıcı Adı">
+                <input type="password" id="login-pass" placeholder="Şifre"> 
+                <button onclick="enterSystem('login-email')">Giriş Yap</button>
+                <p onclick="showPage('register-page')">Hesabın yok mu? <span>Kayıt Ol</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-page" class="page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Hemen Üye Ol</h2>
+                <input type="text" id="reg-name" placeholder="Ad Soyad">
+                <input type="email" placeholder="E-posta">
+                <input type="password" placeholder="Şifre"> 
+                <input type="tel" id="reg-phone" placeholder="Telefon (05xx xxx xx xx)" maxlength="11">
+                <button onclick="enterSystem('reg-name')">Kayıt Ol ve Başla</button>
+                <p onclick="showPage('login-page')">Zaten üye misin? <span>Giriş Yap</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-page" class="page">
+        <header>
+            <div class="logo">YemekSepeti (Kütahya/Tavşanlı)</div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <span id="user-display" style="font-weight:600"></span>
+                <div onclick="toggleCart()" style="cursor:pointer; position:relative;">
+                    <i class="fa-solid fa-basket-shopping" style="font-size:20px;"></i>
+                    <span id="cart-count" style="position:absolute; top:-10px; right:-10px; background:var(--primary); color:white; border-radius:50%; padding:2px 6px; font-size:10px;">0</span>
+                </div>
+                <i class="fa-solid fa-power-off" onclick="location.reload()" style="color:red; cursor:pointer;"></i>
+            </div>
+        </header>
+
+        <div class="cat-nav">
+            <button class="cat-btn active" onclick="filterRes('tumu')">Tümü</button>
+            <button class="cat-btn" onclick="filterRes('Zurna')">Zurna</button>
+            <button class="cat-btn" onclick="filterRes('pide')">Pide</button>
+            <button class="cat-btn" onclick="filterRes('kokoreç')">Kokoreç</button> 
+            <button class="cat-btn" onclick="filterRes('tost')">tost</button> 
+             <button class="cat-btn" onclick="filterRes('yaren')">yaren</button> 
+              <button class="cat-btn" onclick="filterRes('çiğköfte')">çiğköfte</button> 
+              <button class="cat-btn" onclick="filterRes('pizza')">pizza</button>
+        </div>
+
+        <div class="container">
+            <div class="res-grid" id="res-grid"></div>
+        </div>
+    </div>
+
+    <div id="menuModal" class="modal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <span onclick="closeModal()" style="float:right; cursor:pointer;"><i class="fa-solid fa-x"></i></span>
+                <h3 id="m-name">Restoran</h3>
+                <small id="m-hours"></small>
+            </div> 
+            <div class="menu-tabs">
+    <button class="tab-btn active" onclick="filterMenuItems('yemek', this)">Yemekler</button>
+    <button class="tab-btn" onclick="filterMenuItems('icecek', this)">İçecekler</button>
+    <button class="tab-btn" onclick="filterMenuItems('tatli', this)">Tatlılar</button>
+</div>
+            <div id="m-items"></div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h3>Sepetim <i class="fa-solid fa-arrow-right" onclick="toggleCart()" style="float:right; cursor:pointer;"></i></h3>
+        <div id="cart-view">
+            <div class="cart-items" id="cart-list"></div>
+            <div style="border-top:2px solid #eee; padding-top:15px;">
+                <h4>Toplam: <span id="total-val">0.00</span> TL</h4>
+                <button onclick="showCheckout()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Ödemeye Geç</button>
+            </div>
+        </div>
+
+        <div id="checkout-view" style="display:none;">
+            <p onclick="hideCheckout()" style="color:blue; cursor:pointer;"><i class="fa-solid fa-chevron-left"></i> Geri Dön</p>
+            <input type="text" id="order-addr" placeholder="Teslimat Adresi" style="width:100%; padding:10px; margin:10px 0;">
+            <select id="pay-type" onchange="checkPayType()" style="width:100%; padding:10px; margin-bottom:10px;">
+                <option value="nakit">Kapıda Nakit</option>
+                <option value="kart">Kapıda Kredi Kartı</option>
+                <option value="online">Online Kredi Kartı</option>
+            </select>
+
+            <div class="card-visual" id="card-ui">
+                <div id="v-num" style="font-size:16px; margin-bottom:10px;">**** **** **** ****</div>
+                <div style="display:flex; justify-content:space-between; font-size:10px;">
+                    <span id="v-holder">AD SOYAD</span>
+                    <span id="v-exp">00/00</span>
+                </div>
+            </div>
+
+            <div id="online-fields" style="display:none;">
+                <input type="text" id="card-holder" placeholder="Kart Sahibi" onkeyup="syncCard()" style="width:100%; margin-bottom:5px;">
+                <input type="text" id="card-no" placeholder="Kart No" maxlength="19" onkeyup="syncCard()" style="width:100%; margin-bottom:5px;">
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="card-date" placeholder="AA/YY" onkeyup="syncCard()" style="width:50%;">
+                    <input type="text" placeholder="CVV" maxlength="3" style="width:50%;">
+                </div>
+            </div>
+            <button onclick="complete()" style="width:100%; padding:12px; background:#2ed573; color:white; border:none; border-radius:8px; margin-top:15px; cursor:pointer;">Siparişi Onayla</button>
+        </div>
+    </div>
+
+    <script>
+   // --- DEĞİŞKENLER ---
+let cart = []; 
+let currentOpenMenu = []; 
+
+const restaurants = [
+  { 
+        id: 1, cat: "Zurna", name: "Dilos Döner", hours: "10:00-00:00",
+        addr: "Durak Mah. Tahsin Buruk Cd. No:22/a", img: "resimler/dilos.png", 
+        menu: [
+            {n:"Dilos Zurna", p:160, z:true, type:"yemek"},
+            {n:"Et Zurna", p:230, type:"yemek"},  
+            {n:"Dilos Et Zurna", p:260, type:"yemek"}, 
+            {n:"vegan dürüm", p:120, type:"yemek"},
+            {n:"Ayran (300ml)", p:30, type:"icecek"},
+            {n:"Pepsi", p:50, type:"icecek"}, 
+            {n:"fuse tea KARPUZLU", p:50, type:"icecek"}, 
+        ] 
+    },
+    { 
+        id: 2, cat: "Zurna", name: "Öncü Döner", hours: "10:00-00:00", 
+        addr: " Durak, Emirler Cd. No:60, 43300 Tavşanlı/Kütahya", img: "resimler/oncu.png", 
+        menu: [
+            {n:"Zurna Dürüm", p:150, z:true, type:"yemek"},
+            {n:"Ayran", p:30, type:"icecek"},
+            {n:"Kola", p:50, type:"icecek"} 
+        ] 
+    },
+    { 
+        id: 3, cat: "Zurna", name: "Bereket Döner", hours: "09:30:-00:00", 
+        addr: " Bedesten AVM Bereket Döner, Durak, Kemal Zeytinoğlu Cd. No:75 içkapı no:205, 43300 Tavşanlı/Kütahya.", img: "resimler/bereket.png", 
+        menu: [
+            {n:"zurna Dürüm", p:260, type:"yemek"},
+            {n:"Et Döner Dürüm", p:190, type:"yemek"}, 
+            {n:"Pepsi", p:60, type:"icecek"} ,
+            {n:"Ayran", p:40, type:"icecek"},
+           
+        ] 
+    },
+    { 
+        id: 4, cat: "pizza", name: "Tavşanlı Quick Pizza", hours: "10:00-20:00", 
+        addr: " Durak, İstasyon Cd. No:14 D, 43300 Tavşanlı/Kütahya", img: "resimler/pi.jpg", 
+        menu: [
+            {n:"sucuklu kaşarlı pizza", p:150, type:"yemek"},
+            {n:"karışık pizza", p:200, type:"yemek"},
+            {n:"Lipton ice tea diyet şekersiz ", p:60, type:"icecek"} ,
+            {n:"coco cola", p:60, type:"icecek"},
+        ] 
+    },
+    { 
+        id: 5, cat: "tost", name: "Kaptan Tost", hours: "10:00-20:00", 
+        addr: "Yeni Mahalle,Haşim Benli Blv., 43300 Tavşanlı/Kütahya.", img: "resimler/kaptan.png", 
+        menu: [
+            {n:"Karışık Tost", p:90, type:"yemek"},
+            {n:"Sucuklu Tost", p:180, type:"yemek"},
+            {n:"Ayran", p:20, type:"icecek"},
+            {n:"pepsi", p:40, type:"icecek"},
+        ] 
+    },
+    { 
+        id: 6, cat: "pide", name: "Tuğra Pide", hours: "08:00-22:00", 
+        addr: "Ulu cami mah.kütahya cad. no:103, 43300 tavşanlı/Kütahya.", img: "resimler/tugrapide.png", 
+        menu: [
+            {n:"kıymalı pide", p:110, type:"yemek"},
+            {n:"peynirli pide", p:100, type:"yemek"},
+            {n:"kuşbaşılı pide", p:140, type:"icecek"}, 
+            {n:"Ayran", p:10, type:"icecek"}, 
+            {n:"Pepsi", p:20, type:"icecek"},
+           
+            
+        ] 
+    },
+    { 
+        id: 7, cat: "pide", name: "Keyfi Ala Pide", hours: "08:30-21:00", 
+        addr: "Ulu cami mah.kütahya cad. no:103, 43300 tavşanlı/Kütahya", img: "resimler/keyfi.png", 
+        menu: [
+             {n:"kıymalı pide", p:120, type:"yemek"},
+            {n:"peynirli pide", p:110, type:"yemek"},
+            {n:"kuşbaşılı pide", p:150, type:"icecek"}, 
+            {n:"Ayran", p:30, type:"icecek"}, 
+            {n:"Pepsi", p:50, type:"icecek"},
+        ] 
+    },
+    { 
+        id: 8, cat: "yaren", name: "vural gözleme", hours: "09:00-19:00", 
+        addr: " Durak, Şıhlar 1. sokak no 2 G, 43300 Tavşanlı/Kütahya", img: "resimler/vural.png", 
+        menu: [
+            {n:"sade yaren", p:140, type:"yemek"},
+            {n:"tavuklu yaren", p:170, type:"yemek"}, 
+             {n:"çikolatalı yaren", p:170, type:"yemek"}, 
+              {n:"çikolatalı yaren", p:170, type:"tatli"},
+            {n:"Ayran", p:25, type:"icecek"}
+        ] 
+    },
+    { 
+        id: 9, cat: "kokoreç", name: "Linyit Kokoreç", hours: "11:00-04:00", 
+        addr: " Yeni, Haşim Benli Blv. No:65 D:63, 43410 Tavşanlı/Kütahya", img: "resimler/linyt.png", 
+        menu: [
+            {n:"Yarım Ekmek Kokoreç", p:100, type:"yemek"},
+            {n:"tam ekmek kokoreç", p:200, type:"yemek"},
+            {n:"Ayran", p:40, type:"icecek"}, 
+            {n:"Pepsi", p:60, type:"icecek"},
+           
+        ] 
+    },
+    { 
+        id: 10, cat: "çiğköfte", name: "Adıyaman Çiğköfte Ramazan Altuğ ", hours: "08:00-23:00", phone: "02746140000",
+        addr: "Tavşanlı, Tunçbilek Cad., 74", img: "resimler/cigkofte.jpg", 
+        menu: [
+            {n:"ACILI ETLİ ÇİĞKÖFTE", p:120, type:"yemek"},
+            {n:"ACISIZ ETSİZ ÇİĞKÖFTE ", p:80, type:"yemek"}, 
+            {n:"ACILI ETSİZ ÇİĞKÖFTE", p:100, type:"yemek"},
+            {n:"ACISIZ ETLİ ÇİĞKÖFTE ", p:110, type:"yemek"},
+            {n:"Ayran", p:40, type:"icecek"}, 
+            {n:"Pepsi", p:60, type:"icecek"},
+            
+        ] 
+    }
+
+    
+];
+
+// --- SAYFA VE GİRİŞ SİSTEMİ ---
+function showPage(pId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pId).classList.add('active');
+}
+
+function enterSystem(inputId) {
+    const user = document.getElementById(inputId).value;
+    if(!user) return alert("Lütfen alanı doldurun!");
+    document.getElementById('user-display').innerText = "Selam, " + user;
+    showPage('main-page');
+    renderRes(); // Restoranları listele
+}
+
+// --- RESTORANLARI LİSTELEME ---
+function renderRes(filter = 'tumu') {
+    const grid = document.getElementById('res-grid');
+    grid.innerHTML = "";
+    const list = filter === 'tumu' ? restaurants : restaurants.filter(r => r.cat === filter);
+    
+    list.forEach(r => {
+        grid.innerHTML += `
+            <div class="res-card" onclick="openMenu(${r.id})">
+                <img src="${r.img}" class="res-img">
+                <div class="res-info">
+                    <h3 style="margin:0;">${r.name}</h3>
+                    <p style="font-size:11px; color:#777;">${r.addr}</p>
+                    <p style="font-size:12px; color:var(--primary); font-weight:bold;">Menüyü Gör</p>
+                </div>
+            </div>`;
+    });
+}
+
+function filterRes(cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    if(event) event.target.classList.add('active');
+    renderRes(cat);
+}
+
+// --- MENÜ VE KATEGORİ SİSTEMİ ---
+function openMenu(id) {
+    const res = restaurants.find(r => r.id === id);
+    if(!res) return;
+
+    currentOpenMenu = res.menu; 
+    document.getElementById('m-name').innerText = res.name;
+    
+    // TELEFON VE SAAT BİLGİSİNİ BURADA BİRLEŞTİRİYORUZ
+    document.getElementById('m-hours').innerHTML = `
+        <i class="fa-solid fa-clock"></i> ${res.hours} | 
+        <a href="tel:${res.phone}" style="color:var(--primary); text-decoration:none; font-weight:bold;">
+            <i class="fa-solid fa-phone"></i> ${res.phone}
+        </a>
+    `;
+    
+    const firstTab = document.querySelector('.tab-btn');
+    filterMenuItems('yemek', firstTab);
+    
+    document.getElementById('menuModal').style.display = "block";
+}
+function filterMenuItems(type, element) {
+    // Tab butonlarını güncelle
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if(element) element.classList.add('active');
+
+    const list = document.getElementById('m-items');
+    list.innerHTML = "";
+    
+    const filtered = currentOpenMenu.filter(item => item.type === type);
+    
+    if(filtered.length === 0) {
+        list.innerHTML = `<p style="padding:20px; text-align:center; color:#999;">Bu kategoride ürün yok.</p>`;
+        return;
+    }
+
+    filtered.forEach(item => {
+        list.innerHTML += `
+            <div class="menu-item">
+                <div>${item.z ? '<span class="zurna">ZURNA</span>' : ''} <b>${item.n}</b><br>${item.p} TL</div>
+                <button onclick="addToCart('${item.n}', ${item.p})" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Ekle</button>
+            </div>`;
+    });
+}
+
+function closeModal() { document.getElementById('menuModal').style.display = "none"; }
+
+// --- SEPET SİSTEMİ ---
+function addToCart(n, p) {
+    cart.push({ n: n, p: p });
+    document.getElementById('cart-count').innerText = cart.length;
+    renderCart();
+}
+
+function renderCart() {
+    const list = document.getElementById('cart-list');
+    const totalDisp = document.getElementById('total-val');
+    list.innerHTML = "";
+    let total = 0;
+
+    if (cart.length === 0) {
+        list.innerHTML = `<p style="text-align:center; color:#999; margin-top:20px;">Sepetiniz boş.</p>`;
+        totalDisp.innerText = "0.00";
+        return;
+    }
+
+    cart.forEach((item, i) => {
+        total += item.p;
+        list.innerHTML += `<div class="menu-item" style="padding:10px; border-bottom:1px solid #eee;">
+            <span>${item.n}</span>
+            <span><b>${item.p} TL</b> <i class="fa-solid fa-trash" onclick="remove(${i})" style="color:red; cursor:pointer; margin-left:10px;"></i></span>
+        </div>`;
+    });
+    totalDisp.innerText = total.toFixed(2);
+}
+
+function remove(i) {
+    cart.splice(i, 1);
+    document.getElementById('cart-count').innerText = cart.length;
+    renderCart();
+}
+
+function toggleCart() { document.getElementById('sidebar').classList.toggle('active'); }
+
+function showCheckout() { document.getElementById('cart-view').style.display="none"; document.getElementById('checkout-view').style.display="block"; }
+function hideCheckout() { document.getElementById('cart-view').style.display="block"; document.getElementById('checkout-view').style.display="none"; }
+
+function checkPayType() {
+    const val = document.getElementById('pay-type').value;
+    document.getElementById('card-ui').style.display = val === 'online' ? 'block' : 'none';
+    document.getElementById('online-fields').style.display = val === 'online' ? 'block' : 'none';
+}
+
+function syncCard() {
+    document.getElementById('v-num').innerText = document.getElementById('card-no').value || "**** **** **** ****";
+    document.getElementById('v-holder').innerText = document.getElementById('card-holder').value.toUpperCase() || "AD SOYAD";
+    document.getElementById('v-exp').innerText = document.getElementById('card-date').value || "00/00";
+}
+
+function complete() {
+    const address = document.getElementById('order-addr').value;
+    
+    if(!address) {
+        return alert("Lütfen teslimat adresi girin!");
+    }
+
+    // 1. Kullanıcıya başarı mesajı ver
+    alert("Siparişiniz başarıyla alındı! En kısa sürede kapınızda olacak. Afiyet olsun!");
+
+    // 2. Sepeti tamamen boşalt
+    cart = [];
+    document.getElementById('cart-count').innerText = "0";
+    renderCart();
+
+    // 3. Ödeme ekranını kapat, sepet görünümüne geri dön (temiz bir başlangıç için)
+    hideCheckout();
+
+    // 4. Sepet (sidebar) panelini kapat
+    toggleCart();
+
+    // DİKKAT: Burada eskiden location.reload() vardı, onu sildik.
+    // Artık sayfa yenilenmeyecek, kullanıcı ana sayfada kalacak.
+}
+
+window.onclick = e => { if(e.target.className === 'modal') closeModal(); }
+    </script>
+</body>
+</html>
