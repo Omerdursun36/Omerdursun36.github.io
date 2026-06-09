@@ -1,72 +1,209 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MandaCafe</title>
 
 <style>
+:root{
+  --bg1:#fff6ec;
+  --bg2:#f3e0c9;
+  --brown:#a25a2b;
+  --dark:#6b3a1a;
+  --card:#ffffff;
+}
+
+*{box-sizing:border-box;font-family:Arial}
+
 body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(180deg,#fff3e6,#f0d6b8);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+  margin:0;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.container{
+  width:100%;
+  max-width:1100px;
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:20px;
 }
 
 .box{
-text-align:center;
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-width:90%;
-max-width:500px;
+  background:rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+  border-radius:25px;
+  padding:25px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.1);
 }
 
-.logo{font-size:70px;}
-h1{color:#7a3f1d;}
+/* LOGO */
+.logo{
+  text-align:center;
+  font-size:70px;
+}
 
+.title{
+  text-align:center;
+  font-size:40px;
+  font-weight:bold;
+  color:var(--dark);
+}
+
+.subtitle{
+  text-align:center;
+  color:#6a5a4d;
+  margin-top:10px;
+}
+
+/* BUTTONS */
 .btn{
-display:block;
-margin-top:15px;
-padding:12px;
-border-radius:12px;
-text-decoration:none;
-font-weight:bold;
+  display:inline-block;
+  padding:12px 18px;
+  margin-top:15px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:bold;
+  text-align:center;
 }
 
-.primary{background:#7a3f1d;color:white;}
-.secondary{border:2px solid #7a3f1d;color:#7a3f1d;}
+.primary{
+  background:var(--brown);
+  color:white;
+}
 
-#qrcode{margin-top:20px;}
+.secondary{
+  border:2px solid var(--brown);
+  color:var(--brown);
+  background:white;
+}
+
+/* QR */
+#qrcode{
+  display:flex;
+  justify-content:center;
+  margin-top:15px;
+}
+
+/* INFO */
+.cards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:20px;
+}
+
+.card{
+  background:white;
+  padding:12px;
+  border-radius:15px;
+  font-size:14px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* MINI MENU */
+.menu-preview{
+  margin-top:20px;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+
+/* RIGHT SIDE */
+.right h3{
+  margin-top:0;
+  text-align:center;
+}
+
+.note{
+  font-size:13px;
+  color:#6a5a4d;
+  text-align:center;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .container{
+    grid-template-columns:1fr;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<div class="box">
-<div class="logo">🐃</div>
-<h1>MandaCafe</h1>
+<div class="container">
 
-<a class="btn primary" href="menu.html">Menüye Git</a>
+  <!-- LEFT -->
+  <div class="box">
 
-<div id="qrcode"></div>
+    <div class="logo">🐃</div>
+    <div class="title">MandaCafe</div>
+    <div class="subtitle">Lezzetli Kahve & Tatlı Deneyimi</div>
 
-<p>QR ile menüye giriş</p>
+    <div style="text-align:center;margin-top:15px;">
+      <a class="btn primary" href="menu.html">🍽 Menüye Git</a>
+      <br/>
+      <a class="btn secondary" href="menu.html">📱 QR’sız Giriş</a>
+    </div>
+
+    <div class="cards">
+      <div class="card">☕ Sıcak İçecekler</div>
+      <div class="card">🧊 Soğuk İçecekler</div>
+      <div class="card">🍰 Tatlılar</div>
+      <div class="card">🍔 Yemekler</div>
+    </div>
+
+    <div class="menu-preview">
+      <h3>🔥 Öne Çıkanlar</h3>
+
+      <div class="item"><span>☕ Türk Kahvesi</span><b>70₺</b></div>
+      <div class="item"><span>🍰 Sufle</span><b>155₺</b></div>
+      <div class="item"><span>🍔 Hamburger</span><b>220₺</b></div>
+      <div class="item"><span>🍋 Limonata</span><b>80₺</b></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="box right">
+
+    <h3>📱 QR Menü</h3>
+    <p class="note">
+      QR kodu okutarak doğrudan menüye ulaşabilirsiniz.
+    </p>
+
+    <div id="qrcode"></div>
+
+    <p class="note">
+      (GitHub'a yükledikten sonra QR otomatik çalışır)
+    </p>
+
+  </div>
+
 </div>
 
+<!-- QR SCRIPT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const MENU_URL="https://omerdursun36.github.io/MandaCafe/menu.html";
+  // BURAYI GİTHUB LINKİNLE DEĞİŞTİR
+  const MENU_URL = "menu.html";
 
-new QRCode(document.getElementById("qrcode"),{
-text:MENU_URL,
-width:180,
-height:180
-});
+  new QRCode(document.getElementById("qrcode"), {
+    text: MENU_URL,
+    width: 220,
+    height: 220
+  });
 </script>
 
 </body>
