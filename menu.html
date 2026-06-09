@@ -1,176 +1,584 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MandaCafe Menü</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>MandaCafe | Menü</title>
+  <meta name="description" content="MandaCafe dijital menü sayfası" />
+  <style>
+    :root{
+      --bg:#fffaf4;
+      --card:#ffffff;
+      --text:#2c2219;
+      --muted:#6d5f55;
+      --primary:#a75d2e;
+      --primary2:#7f431f;
+      --soft:#f8ecdd;
+      --line:#ead8c3;
+      --shadow:0 16px 40px rgba(76, 40, 13, .09);
+      --radius:24px;
+    }
 
-<style>
-body{margin:0;font-family:Arial;background:#fff7ef}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Arial, Helvetica, sans-serif;background:linear-gradient(180deg,#fffdf8,var(--bg));color:var(--text)}
+    body{min-height:100vh}
 
-/* HEADER */
-header{
-background:white;
-padding:15px;
-position:sticky;
-top:0;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-}
+    .container{
+      width:100%;
+      max-width:1180px;
+      margin:0 auto;
+      padding:16px;
+    }
 
-h1{text-align:center;margin:0;color:#6a3418}
+    .header{
+      background:rgba(255,255,255,.88);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow:var(--shadow);
+      border-radius:28px;
+      padding:18px;
+      position:sticky;
+      top:12px;
+      z-index:20;
+    }
 
-input,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-border:1px solid #ddd;
-border-radius:10px;
-}
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
 
-/* GRID */
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:10px;
-padding:10px;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
 
-.card{
-background:white;
-padding:10px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
+    .logo{
+      width:52px;
+      height:52px;
+      border-radius:16px;
+      background:linear-gradient(135deg,#c47b45,#8f4d25);
+      color:#fff;
+      display:grid;
+      place-items:center;
+      font-size:24px;
+      box-shadow:0 10px 20px rgba(167,93,46,.22);
+      flex:0 0 auto;
+    }
 
-.emoji{font-size:30px}
+    .brand h1{
+      margin:0;
+      font-size:22px;
+      line-height:1.1;
+    }
 
-.price{color:#7a3f1d;font-weight:bold}
+    .brand p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
 
-/* ADMIN */
-.admin{
-margin:10px;
-padding:15px;
-background:#fff;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
+    .pill{
+      padding:10px 14px;
+      border-radius:999px;
+      background:#fff2e3;
+      border:1px solid var(--line);
+      color:var(--primary2);
+      font-weight:700;
+      font-size:13px;
+    }
 
-.hidden{display:none}
+    .searchrow{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+    }
 
-button{
-padding:8px;
-margin-top:5px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-}
+    .search{
+      width:100%;
+      border:none;
+      outline:none;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      font-size:16px;
+    }
 
-.add{background:#7a3f1d;color:white}
-.del{background:red;color:white}
-.edit{background:orange;color:white}
+    .btn{
+      border:none;
+      cursor:pointer;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:#fff;
+      font-weight:700;
+      border-radius:16px;
+      padding:0 16px;
+      min-height:54px;
+      font-size:15px;
+      box-shadow:0 12px 24px rgba(167,93,46,.18);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
 
-</style>
+    .tabs{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      overflow:auto;
+      scrollbar-width:none;
+      padding-bottom:4px;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+
+    .tab{
+      border:none;
+      cursor:pointer;
+      white-space:nowrap;
+      padding:12px 16px;
+      border-radius:999px;
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line);
+      font-weight:700;
+      transition:all .18s ease;
+    }
+
+    .tab.active{
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 10px 18px rgba(167,93,46,.18);
+    }
+
+    .hero{
+      margin-top:18px;
+      background:linear-gradient(135deg,#fff,#fff6ec);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:22px;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      gap:18px;
+      align-items:center;
+    }
+
+    .hero h2{
+      margin:0 0 10px;
+      font-size:clamp(24px,3vw,38px);
+      line-height:1.05;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+      max-width:60ch;
+    }
+
+    .hero-box{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px;
+      min-height:170px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .hero-box strong{font-size:18px}
+    .hero-box span{color:var(--muted);font-size:14px;line-height:1.6}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.95);
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .image{
+      width:100%;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      display:block;
+      background:#f3e6d7;
+    }
+
+    .content{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:1;
+    }
+
+    .title-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .title-row h3{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+    }
+
+    .price{
+      background:#fff2e3;
+      border:1px solid var(--line);
+      color:var(--primary2);
+      border-radius:999px;
+      padding:7px 10px;
+      font-weight:800;
+      font-size:13px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    .desc{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+      min-height:44px;
+    }
+
+    .meta{
+      display:grid;
+      gap:8px;
+      margin-top:auto;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      width:max-content;
+      padding:7px 10px;
+      border-radius:999px;
+      background:var(--soft);
+      color:var(--primary2);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .line{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:13px;
+      color:var(--muted);
+      padding-top:10px;
+      border-top:1px dashed var(--line);
+    }
+
+    .empty{
+      margin-top:18px;
+      padding:26px;
+      border-radius:24px;
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      text-align:center;
+      color:var(--muted);
+      display:none;
+    }
+
+    .footer{
+      margin:20px 0 8px;
+      text-align:center;
+      color:#8f7b6d;
+      font-size:12px;
+    }
+
+    @media (max-width:980px){
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .hero{grid-template-columns:1fr}
+    }
+
+    @media (max-width:640px){
+      .container{padding:12px}
+      .header{padding:14px;border-radius:22px;top:8px}
+      .searchrow{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .hero{padding:18px;border-radius:22px}
+      .brand h1{font-size:20px}
+      .btn{min-height:50px}
+    }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <header class="header">
+      <div class="top">
+        <div class="brand">
+          <div class="logo">☕</div>
+          <div>
+            <h1>MandaCafe Menü</h1>
+            <p>QR ile açılan dijital menü</p>
+          </div>
+        </div>
+        <div class="pill">Mobil Uyumlu • Hızlı • Temiz</div>
+      </div>
 
-<header>
-<h1>🐃 MandaCafe Menü</h1>
+      <div class="searchrow">
+        <input id="searchInput" class="search" type="search" placeholder="Ürün ara... örnek: filtre kahve, sütlaç, hamburger" />
+        <a class="btn" href="./index.html">Ana Sayfa</a>
+      </div>
 
-<input id="search" placeholder="Ürün ara...">
+      <div class="tabs" id="tabs"></div>
+    </header>
 
-<select id="filter">
-<option value="all">Tümü</option>
-<option>Sıcak İçecekler</option>
-<option>Soğuk İçecekler</option>
-<option>Tatlılar</option>
-<option>Ana Yemekler</option>
-</select>
+    <section class="hero">
+      <div>
+        <h2>Hoş geldiniz</h2>
+        <p>
+          MandaCafe dijital menüsüne hoş geldiniz. Kategoriler arasında gezebilir, ürünleri arayabilir,
+          fiyat ve içerik bilgilerini görebilirsiniz.
+        </p>
+      </div>
+      <div class="hero-box">
+        <strong>Günün önerisi</strong>
+        <span>Filtre kahve + cheesecake ikilisi çok iyi gider.</span>
+        <span>Arama kutusuna istediğiniz ürünü yazın, sonuçlar anında güncellensin.</span>
+      </div>
+    </section>
 
-<button onclick="login()">Admin Giriş</button>
-</header>
+    <section class="grid" id="menuGrid"></section>
+    <div class="empty" id="emptyBox">Aradığınız ürüne uygun sonuç bulunamadı.</div>
 
-<!-- ADMIN PANEL -->
-<div class="admin hidden" id="adminPanel">
+    <div class="footer">© MandaCafe • QR Menü Sistemi</div>
+  </div>
 
-<h3>Admin Panel</h3>
+  <script>
+    const menuData = [
+      {
+        name: "Filtre Kahve",
+        category: "Sıcak İçecekler",
+        price: "85 TL",
+        description: "Özenle öğütülmüş kahve çekirdeklerinden hazırlanan klasik filtre kahve.",
+        allergens: "Alerjen: Yok",
+        tag: "Klasik",
+        image: "filtre.jpg"
+      },
+      {
+        name: "Türk Kahvesi",
+        category: "Sıcak İçecekler",
+        price: "70 TL",
+        description: "Köpüğü yerinde, geleneksel lezzet. Yanında su ile servis edilir.",
+        allergens: "Alerjen: Yok",
+        tag: "Geleneksel",
+        image: "turk.jpg"
+      },
+      {
+        name: "Sıcak Çikolata",
+        category: "Sıcak İçecekler",
+        price: "95 TL",
+        description: "Yoğun kakao aromalı, yumuşak içimli sıcak içecek.",
+        allergens: "Alerjen: Süt ürünü içerir",
+        tag: "Tatlı",
+        image: "scıkolata.jpg"
+      },
+      {
+        name: "Limonata",
+        category: "Soğuk İçecekler",
+        price: "80 TL",
+        description: "Taze limon ve nane ile hazırlanan ferah içecek.",
+        allergens: "Alerjen: Yok",
+        tag: "Serinletici",
+        image: "limonata.jpg"
+      },
+      {
+        name: "Iced Latte",
+        category: "Soğuk İçecekler",
+        price: "110 TL",
+        description: "Buz, espresso ve süt ile hazırlanan modern kahve seçeneği.",
+        allergens: "Alerjen: Süt ürünü içerir",
+        tag: "Popüler",
+        image: "iced latte.jpg"
+      },
+      {
+        name: "Meyve Smoothie",
+        category: "Soğuk İçecekler",
+        price: "120 TL",
+        description: "Muz, çilek ve yoğurt ile hazırlanan vitaminli içecek.",
+        allergens: "Alerjen: Süt ürünü içerir",
+        tag: "Sağlıklı",
+        image: "msmot.jpg"
+      },
+      {
+        name: "Cheesecake",
+        category: "Tatlılar",
+        price: "145 TL",
+        description: "Kremamsı dokusu ve yumuşak tabanı ile tatlı sevenler için ideal.",
+        allergens: "Alerjen: Süt, yumurta, gluten",
+        tag: "Tatlı",
+        image: "c.jpg"
+      },
+      {
+        name: "Sufle",
+        category: "Tatlılar",
+        price: "155 TL",
+        description: "Akışkan çikolata dolgulu sıcak sufle.",
+        allergens: "Alerjen: Süt, yumurta, gluten",
+        tag: "Sıcak Tatlı",
+        image: "scıkolata.jpg"
+      },
+      {
+        name: "Baklava",
+        category: "Tatlılar",
+        price: "130 TL",
+        description: "Şerbetli, bol fıstıklı klasik Türk tatlısı.",
+        allergens: "Alerjen: Fıstık, gluten, süt",
+        tag: "Klasik",
+        image: "baklava.jpg"
+      },
+      {
+        name: "Hamburger Menü",
+        category: "Ana Yemekler",
+        price: "220 TL",
+        description: "Izgara köfte, patates kızartması ve özel sos ile servis edilir.",
+        allergens: "Alerjen: Gluten, süt ürünü",
+        tag: "Doyurucu",
+        image: "h.jpg"
+      },
+      {
+        name: "Tavuk Burger",
+        category: "Ana Yemekler",
+        price: "210 TL",
+        description: "Taze tavuk fileto, marul ve özel sos ile hazırlanır.",
+        allergens: "Alerjen: Gluten, yumurta",
+        tag: "Favori",
+        image: "tb.jpg"
+      },
+      {
+        name: "Kahvaltı Tabağı",
+        category: "Kahvaltı",
+        price: "240 TL",
+        description: "Peynir, zeytin, yumurta, domates, salatalık ve reçel çeşitleri.",
+        allergens: "Alerjen: Süt, yumurta",
+        tag: "Güne Başlangıç",
+        image: "kt.jpg"
+      },
+      {
+        name: "Menemen",
+        category: "Kahvaltı",
+        price: "165 TL",
+        description: "Domates, biber ve yumurta ile sıcak servis edilir.",
+        allergens: "Alerjen: Yumurta",
+        tag: "Sıcak",
+        image: "menemen.jpg"
+      },
+      {
+        name: "Patates Kızartması",
+        category: "Atıştırmalıklar",
+        price: "95 TL",
+        description: "Sıcak ve çıtır patates kızartması.",
+        allergens: "Alerjen: Yok",
+        tag: "Atıştırmalık",
+        image: "pk.jpg"
+      },
+      {
+        name: "Nachos",
+        category: "Atıştırmalıklar",
+        price: "140 TL",
+        description: "Sos ve peynir eşliğinde servis edilen çıtır nachos.",
+        allergens: "Alerjen: Süt ürünü, gluten",
+        tag: "Paylaşmalık",
+        image: "nachos.jpg"
+      },
+      {
+        name: "Bademli Kurabiye",
+        category: "Tatlılar",
+        price: "65 TL",
+        description: "Taze pişmiş, kıyır kıyır kurabiye.",
+        allergens: "Alerjen: Badem, gluten, yumurta",
+        tag: "Taze",
+        image: "bk.jpg"
+      }
+    ];
 
-<input id="name" placeholder="Ürün adı">
-<input id="price" placeholder="Fiyat">
-<input id="cat" placeholder="Kategori">
+    const categories = ["Tümü", ...new Set(menuData.map(item => item.category))];
+    let activeCategory = "Tümü";
 
-<button class="add" onclick="addProduct()">Ekle</button>
+    const tabsEl = document.getElementById("tabs");
+    const gridEl = document.getElementById("menuGrid");
+    const searchInput = document.getElementById("searchInput");
+    const emptyBox = document.getElementById("emptyBox");
 
-</div>
+    function renderTabs() {
+      tabsEl.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "tab" + (cat === activeCategory ? " active" : "");
+        btn.textContent = cat;
+        btn.addEventListener("click", () => {
+          activeCategory = cat;
+          renderTabs();
+          renderMenu();
+        });
+        tabsEl.appendChild(btn);
+      });
+    }
 
-<!-- MENU -->
-<div class="grid" id="menu"></div>
+    function renderMenu() {
+      const q = searchInput.value.trim().toLowerCase();
 
-<script>
-let data=[
-{name:"Türk Kahvesi",price:70,cat:"Sıcak İçecekler",emoji:"☕"},
-{name:"Limonata",price:80,cat:"Soğuk İçecekler",emoji:"🍋"},
-{name:"Sufle",price:150,cat:"Tatlılar",emoji:"🍰"},
-{name:"Hamburger",price:220,cat:"Ana Yemekler",emoji:"🍔"}
-];
+      const filtered = menuData.filter(item => {
+        const matchesCategory = activeCategory === "Tümü" || item.category === activeCategory;
+        const text = `${item.name} ${item.category} ${item.description} ${item.allergens} ${item.tag}`.toLowerCase();
+        const matchesSearch = !q || text.includes(q);
+        return matchesCategory && matchesSearch;
+      });
 
-function render(){
-let q=document.getElementById("search").value.toLowerCase();
-let f=document.getElementById("filter").value;
+      gridEl.innerHTML = filtered.map(item => `
+        <article class="card">
+          <img class="image" src="${item.image}" alt="${item.name}" loading="lazy">
+          <div class="content">
+            <div class="title-row">
+              <h3>${item.name}</h3>
+              <div class="price">${item.price}</div>
+            </div>
+            <p class="desc">${item.description}</p>
+            <div class="meta">
+              <span class="tag">✦ ${item.tag}</span>
+              <div class="line">
+                <span>${item.category}</span>
+                <span>${item.allergens}</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join("");
 
-document.getElementById("menu").innerHTML=
-data.filter(x=>
-(x.cat==f||f=="all") &&
-x.name.toLowerCase().includes(q)
-).map((x,i)=>`
-<div class="card">
-<div class="emoji">${x.emoji}</div>
-<b>${x.name}</b>
-<p class="price">${x.price}₺</p>
+      emptyBox.style.display = filtered.length ? "none" : "block";
+    }
 
-<button class="del" onclick="del(${i})">Sil</button>
-</div>
-`).join("");
-}
+    searchInput.addEventListener("input", renderMenu);
 
-function addProduct(){
-let n=document.getElementById("name").value;
-let p=document.getElementById("price").value;
-let c=document.getElementById("cat").value;
-
-data.push({name:n,price:p,cat:c,emoji:"🍽️"});
-save();
-render();
-}
-
-function del(i){
-data.splice(i,1);
-save();
-render();
-}
-
-function save(){
-localStorage.setItem("menu",JSON.stringify(data));
-}
-
-function load(){
-let d=localStorage.getItem("menu");
-if(d) data=JSON.parse(d);
-}
-
-function login(){
-let pass=prompt("Şifre:");
-if(pass=="1234"){
-document.getElementById("adminPanel").classList.remove("hidden");
-}
-}
-
-document.getElementById("search").oninput=render;
-document.getElementById("filter").onchange=render;
-
-load();
-render();
-</script>
-
+    renderTabs();
+    renderMenu();
+  </script>
 </body>
 </html>
